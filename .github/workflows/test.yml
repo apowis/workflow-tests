@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Run linters
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
