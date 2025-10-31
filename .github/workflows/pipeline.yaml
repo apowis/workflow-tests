@@ -48,7 +48,7 @@ jobs:
 
   test:
     needs: changes_detection
-    if: needs.changes_detection.outputs.non-cloud == 'true'
+    if: needs.changes_detection.outputs.non-cloud == 'false'
     uses: ./.github/workflows/test.yml
     permissions:
       contents: write
