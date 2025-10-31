@@ -1,0 +1,55 @@
+name: CI/CD Pipeline  🚀
+run-name: CI/CD Pipeline  🚀 (${{ github.head_ref || github.ref_name }})
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+
+jobs:
+
+  changes_detection:
+    runs-on: ubuntu-latest
+    outputs:
+      # ignore the warning for `Context access might be invalid` in the two lines below
+      cloud: ${{ steps.changed_files.outputs.cloud_any_changed }}
+      non-cloud: ${{ steps.changed_files.outputs.non_cloud_any_changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get all test, doc and src files that have changed
+        id: changed_files
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
+        with:
+          files_yaml: |
+            cloud:
+              - 'cloud/**'
+              - 'schemas/avro/**'
+
+  lint:
+    needs: changes_detection
+    if: needs.changes_detection.outputs.non-cloud == 'true'
+    uses: ./.github/workflows/lint.yml
+    with:
+      GO_VERSION: "1.25"
+
+  test:
+    needs: changes_detection
+    if: needs.changes_detection.outputs.non-cloud == 'true'
+    uses: ./.github/workflows/test.yml
+    permissions:
+      contents: write
+      pull-requests: write
+    with:
+      GO_VERSION: "1.25"
+
