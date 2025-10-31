@@ -35,6 +35,9 @@ jobs:
             cloud:
               - 'cloud/**'
               - 'schema/avro/**'
+            non_cloud:
+              - '**'
+              - '!cloud/**'
 
   lint:
     needs: changes_detection
