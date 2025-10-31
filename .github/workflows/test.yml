@@ -9,7 +9,7 @@ on:
         required: true
 
 jobs:
-  lint:
+  test:
     name: Run linters
     runs-on: ubuntu-latest
     steps:
