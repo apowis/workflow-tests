@@ -34,7 +34,7 @@ jobs:
           files_yaml: |
             cloud:
               - 'cloud/**'
-              - 'schemas/avro/**'
+              - 'schema/avro/**'
 
   lint:
     needs: changes_detection
